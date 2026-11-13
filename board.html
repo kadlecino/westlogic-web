@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Roadmapa AI agentů – Westlogic</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="https://westlogic.eu/wp-content/uploads/2021/06/westlogic_favicon.png">
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/board.css">
+</head>
+<body>
+
+<!-- Board chrome -->
+<header class="ui ui--top">
+  <img class="ui__logo" src="assets/img/logo.svg" alt="Westlogic" width="132" height="28">
+  <span class="ui__sep" aria-hidden="true"></span>
+  <h1 class="ui__title">Roadmapa AI agentů</h1>
+  <button class="ui__btn ui__btn--icon" type="button" id="panelToggle" aria-expanded="true" aria-controls="panel" title="Rámce">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 4.5v15" stroke="currentColor" stroke-width="1.6"/></svg>
+  </button>
+</header>
+<div class="ui ui--right">
+  <button class="ui__btn" type="button" id="resetNotes" title="Vrátit lístky na původní místa">Srovnat lístky</button>
+  <button class="ui__btn ui__btn--ink" type="button" id="present">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z" fill="currentColor"/></svg>Prezentovat
+  </button>
+</div>
+
+<nav class="panel" id="panel" aria-label="Rámce">
+  <p class="panel__h">Rámce</p>
+  <ol id="frameList"></ol>
+  <p class="panel__hint">Táhni plochu myší. Kolečkem přibližuj. Lístky jdou přesouvat.</p>
+</nav>
+
+<div class="zoom ui" role="group" aria-label="Přiblížení">
+  <button type="button" id="zOut" aria-label="Oddálit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <button type="button" id="zPct" class="zoom__pct" title="Zobrazit vše">100 %</button>
+  <button type="button" id="zIn" aria-label="Přiblížit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  <button type="button" id="zFit" aria-label="Zobrazit vše"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+
+<div class="pnav ui" id="pnav" hidden>
+  <button type="button" id="pPrev" aria-label="Předchozí rámec"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <span id="pLabel"></span>
+  <button type="button" id="pNext" aria-label="Další rámec"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button type="button" id="pExit" class="pnav__exit">Ukončit</button>
+</div>
+
+<!-- Canvas -->
+<main class="vp" id="vp">
+<div class="world" id="world">
+<svg class="links" id="links" aria-hidden="true"></svg>
+
+<!-- A. Westlogic dnes -->
+<div class="lane" data-lane="Westlogic dnes">
+  <section class="frame" id="a1" data-title="Návrh spolupráce" style="width:760px">
+    <h2 class="frame__label">Návrh spolupráce</h2>
+    <div class="cover note note--ink" style="--r:-.6deg">
+      <p class="cover__t">AI agenti, kteří řídí marketing šesti značek</p>
+      <p class="cover__s">Reklama, kreativy, B2B obchod a SEO. Agenti dělají práci, lidé rozhodují.</p>
+      <p class="cover__k">Westlogic · listopad 2026</p>
+    </div>
+  </section>
+  <section class="frame" id="a2" data-title="Westlogic v číslech" style="width:760px">
+    <h2 class="frame__label">Westlogic v číslech</h2>
+    <div class="facts">
+      <div class="note" style="--r:1deg"><b class="big">6</b>vlastních značek</div>
+      <div class="note" style="--r:-1.2deg"><b class="big">12</b>trhů v Evropě</div>
+      <div class="note" style="--r:.8deg"><b class="big">10,5 mil.&nbsp;EUR</b>roční obrat</div>
+    </div>
+    <div class="logos note note--plain">
+      <img src="assets/img/brands/fexi-mark.svg" alt="Fexi"><img src="assets/img/brands/zuty.svg" alt="Zuty"><img src="assets/img/brands/foa.svg" alt="FOA">
+      <img src="assets/img/brands/diamondi.svg" alt="Diamondi"><img src="assets/img/brands/everbot.svg" alt="Everbot"><img src="assets/img/brands/atelix.svg" alt="Atelix">
+    </div>
+  </section>
+  <section class="frame" id="a3" data-title="Postřehy a cíl" style="width:760px">
+    <h2 class="frame__label">Postřehy a cíl</h2>
+    <div class="note note--grey" style="--r:-1deg"><span class="tag">Postřeh</span>Dva obory, dvě sezóny. Tvoření prodává hlavně na podzim a v zimě, stínění na jaře a v létě. Rozpočet na reklamu se má přelévat mezi značkami.</div>
+    <div class="note note--grey" style="--r:1deg"><span class="tag">Postřeh</span>Everbot slibuje firmám růst s menším týmem. Stejný princip nabízíme Westlogicu v marketingu.</div>
+    <div class="note note--goal" style="--r:-.4deg"><span class="tag tag--inv">Cíl</span>Víc tržeb na každou značku a trh. Bez nabírání dalších lidí do marketingu.</div>
+  </section>
+</div>
+
+<!-- B. Hotovo pro Westlogic -->
+<div class="lane" data-lane="Hotovo pro Westlogic">
+  <section class="frame" id="b1" data-title="Nový web" style="width:640px">
+    <h2 class="frame__label">Nový web</h2>
+    <article class="shot note note--plain" style="--r:-.6deg">
+      <a href="index.html" target="_blank" rel="noopener"><img src="assets/board/web.jpg" alt="Náhled nového webu Westlogic"></a>
+      <ul><li>Vzorník s pravými logy všech 6 značek</li><li>Formulář sám pozná, o co jde</li><li>Rychlý, bez šablony</li></ul>
+      <a class="open" href="index.html" target="_blank" rel="noopener">Otevřít web ↗</a>
+    </article>
+  </section>
+  <section class="frame" id="b2" data-title="Reporting značek" style="width:640px">
+    <h2 class="frame__label">Reporting značek</h2>
+    <article class="shot note note--plain" style="--r:.5deg">
+      <a href="dashboard.html" target="_blank" rel="noopener"><img src="assets/board/dash.jpg" alt="Náhled reportingu značek"></a>
+      <ul><li>Tržby, objednávky a konverze na jednom místě</li><li>Filtr podle značky, trhu a období</li><li>Sem budou reportovat všichni agenti</li></ul>
+      <a class="open" href="dashboard.html" target="_blank" rel="noopener">Otevřít reporting ↗</a>
+    </article>
+  </section>
+  <section class="frame" id="b3" data-title="Tok poptávek" style="width:640px">
+    <h2 class="frame__label">Tok poptávek</h2>
+    <article class="shot note note--plain" style="--r:-.4deg" id="shot-inq">
+      <a href="poptavky.html" target="_blank" rel="noopener"><img src="assets/board/inq.jpg" alt="Náhled toku poptávek"></a>
+      <ul><li>Poptávka z webu jde rovnou správnému člověku</li><li>E-mail, Slack a inbox se stavem</li><li>Lhůta na odpověď podle typu</li></ul>
+      <a class="open" href="poptavky.html" target="_blank" rel="noopener">Otevřít ukázku ↗</a>
+    </article>
+  </section>
+  <section class="frame" id="b4" data-title="Stav dat" style="width:460px">
+    <h2 class="frame__label">Stav dat</h2>
+    <div class="note note--grey" style="--r:.4deg"><span class="tag">Poznámka</span>Reporting i poptávky teď běží na ukázkových datech. Napojení na Shoptet, GA4 a Meta je první krok roadmapy.</div>
+  </section>
+</div>
+
+<!-- C. Naše práce pro klienty -->
+<div class="lane" data-lane="Naše práce pro klienty">
+  <section class="frame" id="c1" data-title="Kubín: výsledky" style="width:760px">
+    <h2 class="frame__label">Kubín · výsledky</h2>
+    <div class="case__head note note--plain" style="--r:-.4deg">
+      <img src="assets/board/clients/kubin-logo.jpg" alt="Zahradnické práce Kubín">
+      <div><b>Zahradnické práce Kubín</b>Ústecký kraj · reklamy na Metě od 28. 9. 2026</div>
+    </div>
+    <div class="stats stats--2">
+      <div class="note note--ink" style="--r:-.8deg"><b class="big big--inv">88</b>skutečných poptávek</div>
+      <div class="note note--ink" style="--r:.6deg"><b class="big big--inv">191&nbsp;500&nbsp;Kč</b>potvrzené zakázky</div>
+      <div class="note" style="--r:-.5deg"><b class="big">13&nbsp;024&nbsp;Kč</b>za reklamu</div>
+      <div class="note" style="--r:.9deg"><b class="big">4 týdny</b>28. 9. – 25. 10. 2026</div>
+    </div>
+    <p class="src">Zdroj: tabulka poptávek klienta. Počet zakázek ještě roste.</p>
+  </section>
+  <section class="frame" id="c2" data-title="Kubín: reklamy" style="width:900px">
+    <h2 class="frame__label">Kubín · reklamy</h2>
+    <div class="ads">
+      <figure class="note note--plain" style="--r:-1deg"><img src="assets/board/clients/kubin-teplice.jpg" alt="Reklama: Hledáte zahradníka v Teplicích?"><figcaption>Vítěz: město v nadpisu + skutečná fotka</figcaption></figure>
+      <figure class="note note--plain" style="--r:.7deg"><img src="assets/board/clients/kubin-decin.jpg" alt="Reklama: Hledáte zahradníka v Děčíně?"><figcaption>Stejný vzorec pro Děčín</figcaption></figure>
+      <figure class="note note--plain" style="--r:-.5deg"><img src="assets/board/clients/kubin-if-cena.jpg" alt="Reklama: Chcete vědět, kolik bude úprava zahrady stát?"><figcaption>Formulář v Metě: otázka na cenu</figcaption></figure>
+      <figure class="note note--plain" style="--r:1deg"><img src="assets/board/clients/kubin-if-promena.jpg" alt="Reklama: proměna zahrady před a po"><figcaption>Proměna před a po</figcaption></figure>
+    </div>
+  </section>
+  <section class="frame" id="c3" data-title="Kubín: poptávky" style="width:900px">
+    <h2 class="frame__label">Kubín · skutečné poptávky (anonymizované)</h2>
+    <div class="leads">
+      <article class="lead note" style="--r:-.6deg">
+        <p class="lead__meta"><span>9. 10.</span><span>Teplice</span><span class="lead__src">Web · reklama Teplice</span></p>
+        <p class="lead__msg">„Prořez stromů, jednorázový velký úklid.“</p>
+        <p class="lead__who">Jméno skryto · +420 7•• ••• ••• · •••••@volny.cz</p>
+        <span class="pill pill--won">Zakázka 35 000 Kč</span>
+      </article>
+      <article class="lead note" style="--r:.5deg">
+        <p class="lead__meta"><span>30. 9.</span><span>Děčín</span><span class="lead__src">Web · reklama Děčín</span></p>
+        <p class="lead__msg">„S úpravou zahrady.“</p>
+        <p class="lead__who">Jméno skryto · +420 6•• ••• ••• · •••••@seznam.cz</p>
+        <span class="pill pill--won">Zakázka 20 000 Kč</span>
+      </article>
+      <article class="lead note" style="--r:-.4deg">
+        <p class="lead__meta"><span>4. 10.</span><span>Děčín</span><span class="lead__src">Web · reklama Děčín</span></p>
+        <p class="lead__msg">„Příprava zahrady na zimu, ostříhat ovocné stromky 2 kusy, posekat trávu cca 40 cm vysokou…“</p>
+        <p class="lead__who">Jméno skryto · +420 7•• ••• ••• · •••••@seznam.cz</p>
+        <span class="pill pill--won">Zakázka 10 000 Kč</span>
+      </article>
+      <article class="lead note" style="--r:.8deg">
+        <p class="lead__meta"><span>5. 10.</span><span>Děčín</span><span class="lead__src">Web · reklama Děčín</span></p>
+        <p class="lead__msg">„Ostříhání 3 m vysokého a 15 m dlouhého plotu u thují, prosím o přibližnou cenu.“</p>
+        <p class="lead__who">Jméno skryto · +420 7•• ••• ••• · •••••@seznam.cz</p>
+        <span class="pill pill--won">Zakázka 8 000 Kč</span>
+      </article>
+      <article class="lead note" style="--r:-.7deg">
+        <p class="lead__meta"><span>20. 10.</span><span>Tisá</span><span class="lead__src">Web · reklama Ústí</span></p>
+        <p class="lead__msg">„Zahrada cca 1000 m² zanedbaná, plán co s tím dál, aby vypadala dobře.“</p>
+        <p class="lead__who">Jméno skryto · +420 6•• ••• ••• · •••••@seznam.cz</p>
+        <span class="pill">Nabídka odeslána</span>
+      </article>
+      <article class="lead note" style="--r:.4deg">
+        <p class="lead__meta"><span>22. 10.</span><span>Dubí</span><span class="lead__src">Web · reklama Teplice</span></p>
+        <p class="lead__msg">„V březnu příštího roku zajistit jarní úpravu stromů, keřů, živého plotu.“</p>
+        <p class="lead__who">Jméno skryto · +420 7•• ••• ••• · •••••@seznam.cz</p>
+        <span class="pill pill--new">Nová</span>
+      </article>
+    </div>
+  </section>
+  <section class="frame" id="c4" data-title="Dapee: výsledky" style="width:760px">
+    <h2 class="frame__label">Dapee · výsledky</h2>
+    <div class="case__head note note--plain" style="--r:.4deg">
+      <img src="assets/board/clients/dapee-logo.png" alt="DAPEE">
+      <div><b>DAPEE</b>Kladensko a Středočeský kraj · reklamy na Metě od 7. 11. 2026</div>
+    </div>
+    <div class="stats stats--3">
+      <div class="note note--ink" style="--r:.7deg"><b class="big big--inv">21</b>poptávek z formulářů v Metě</div>
+      <div class="note" style="--r:-.6deg"><b class="big">6 dní</b>7. – 13. 11. 2026</div>
+      <div class="note" style="--r:.5deg"><b class="big">10 z 21</b>chce práci do měsíce</div>
+    </div>
+    <p class="src">Zdroj: tabulka poptávek klienta. Kampaň běží, zakázky se teprve domlouvají.</p>
+  </section>
+  <section class="frame" id="c5" data-title="Dapee: reklamy" style="width:900px">
+    <h2 class="frame__label">Dapee · reklamy</h2>
+    <div class="ads">
+      <figure class="note note--plain" style="--r:.8deg"><img src="assets/board/clients/dapee-kaceni.jpg" alt="Reklama: Kácení stromů na Kladně a okolí"><figcaption>Kácení: město v nadpisu (převzato od Kubína)</figcaption></figure>
+      <figure class="note note--plain" style="--r:-.6deg"><img src="assets/board/clients/dapee-cisteni.jpg" alt="Reklama: Potřebujete vyčistit pozemek ve Středočeském kraji?"><figcaption>Čištění pozemku před a po</figcaption></figure>
+      <figure class="note note--plain" style="--r:1deg"><img src="assets/board/clients/dapee-zarostla.jpg" alt="Reklama: Zarostlá zahrada ve Slaném?"><figcaption>Konkrétní problém + úzká oblast</figcaption></figure>
+      <figure class="note note--plain" style="--r:-.9deg"><img src="assets/board/clients/dapee-uklid.jpg" alt="Reklama: Potřebujete uklidit zahradu ve Středočeském kraji?"><figcaption>Sezónní téma: podzimní úklid</figcaption></figure>
+    </div>
+  </section>
+  <section class="frame" id="c6" data-title="Dapee: poptávky" style="width:900px">
+    <h2 class="frame__label">Dapee · skutečné poptávky (anonymizované)</h2>
+    <div class="leads">
+      <article class="lead note" style="--r:.6deg">
+        <p class="lead__meta"><span>13. 11.</span><span>Mladoboleslavsko</span><span class="lead__src">Formulář v Metě</span></p>
+        <dl class="lead__qa"><dt>Co řešit</dt><dd>Jednorázové vyčištění zahrady</dd><dt>Plocha</dt><dd>víc než 1 000 m²</dd><dt>Kdy</dt><dd>co nejdříve</dd></dl>
+        <span class="pill pill--new">Nová</span>
+      </article>
+      <article class="lead note" style="--r:-.5deg">
+        <p class="lead__meta"><span>12. 11.</span><span>Okolí Prahy</span><span class="lead__src">Formulář v Metě</span></p>
+        <dl class="lead__qa"><dt>Co řešit</dt><dd>Jednorázové vyčištění zahrady</dd><dt>Plocha</dt><dd>500 – 1 000 m²</dd><dt>Kdy</dt><dd>co nejdříve</dd></dl>
+        <span class="pill pill--new">Nová</span>
+      </article>
+      <article class="lead note" style="--r:.4deg">
+        <p class="lead__meta"><span>11. 11.</span><span>Kladensko a Slánsko</span><span class="lead__src">Formulář v Metě</span></p>
+        <dl class="lead__qa"><dt>Co řešit</dt><dd>Pravidelná péče o zahradu</dd><dt>Plocha</dt><dd>víc než 1 000 m²</dd><dt>Kdy</dt><dd>později</dd></dl>
+        <span class="pill pill--new">Nová</span>
+      </article>
+      <article class="lead note" style="--r:-.6deg">
+        <p class="lead__meta"><span>10. 11.</span><span>Kladensko a Slánsko</span><span class="lead__src">Formulář v Metě</span></p>
+        <dl class="lead__qa"><dt>Co řešit</dt><dd>Jednorázové vyčištění zahrady</dd><dt>Plocha</dt><dd>do 200 m²</dd><dt>Kdy</dt><dd>během 2–4 týdnů</dd></dl>
+        <span class="pill pill--new">Nová</span>
+      </article>
+    </div>
+  </section>
+  <section class="frame" id="c7" data-title="Přenos znalostí" style="width:460px">
+    <h2 class="frame__label">Přenos znalostí</h2>
+    <div class="note note--ink" style="--r:-.6deg" id="learn"><b>Co fungovalo u Kubína, jede u Dapee od prvního dne</b>Město v nadpisu, skutečná fotka, konkrétní problém. Stejně to přeneseme na značky Westlogicu.</div>
+  </section>
+</div>
+
+<!-- D. Agent 1: Meta Ads -->
+<div class="lane" data-lane="Agent 1 · Meta Ads kampaně">
+  <section class="frame" id="d1" data-title="Co agent dělá" style="width:720px">
+    <h2 class="frame__label">Co agent dělá</h2>
+    <p class="frame__lead">Náš AI agent kompletně spravuje kampaně na Facebooku a Instagramu. Každý den.</p>
+    <ol class="steps">
+      <li class="note" style="--r:-.6deg"><b>Data</b>Katalog ze Shoptetu, pixel a CAPI, marže produktů</li>
+      <li class="note" style="--r:.6deg"><b>Strategie</b>Rozpočet podle sezóny, značky a trhu</li>
+      <li class="note" style="--r:-.4deg" id="meta-creative"><b>Kreativy</b>Dodává agent 2, testuje se víc variant naráz</li>
+      <li class="note" style="--r:.8deg"><b>Spuštění</b>Kampaně v jazyce každého ze 12 trhů</li>
+      <li class="note" style="--r:-.7deg"><b>Optimalizace</b>Denně vypne ztrátové reklamy a přidá vítězům</li>
+      <li class="note note--ink" style="--r:.4deg" id="meta-report"><b>Report</b>Výsledky rovnou do dashboardu Westlogic</li>
+    </ol>
+  </section>
+  <section class="frame" id="d5" data-title="Pojistky a důkaz" style="width:520px">
+    <h2 class="frame__label">Pojistky a důkaz</h2>
+    <div class="note note--grey" style="--r:.6deg"><span class="tag">Pojistky</span>Člověk schvaluje: rozpočet nad limit, nový trh, první kreativu nové značky.</div>
+    <div class="note" style="--r:-.6deg" id="meta-proof"><span class="tag">Už to umíme</span><b>Kubín: 88 poptávek za 4 týdny</b>Stejný agent, stejný postup. Detail v sekci „Naše práce pro klienty“.</div>
+  </section>
+</div>
+
+<!-- E. Agent 2: Video a grafika -->
+<div class="lane" data-lane="Agent 2 · Video a grafické kampaně">
+  <section class="frame" id="e1" data-title="Jak vzniká kreativa" style="width:720px">
+    <h2 class="frame__label">Jak vzniká kreativa</h2>
+    <p class="frame__lead">Agenti vyrobí a upraví videa i grafiku pro všechny značky a jazyky. Drží se brand manuálu.</p>
+    <ol class="steps">
+      <li class="note" style="--r:.7deg"><b>Brief z dat</b>Co se prodává a co funguje v reklamě</li>
+      <li class="note" style="--r:-.8deg"><b>Scénář</b>Háček do 3 vteřin, jedna myšlenka</li>
+      <li class="note" style="--r:.5deg"><b>Výroba a střih</b>Video, grafika, varianty formátů</li>
+      <li class="note" style="--r:-1deg"><b>Lokalizace</b>Titulky a dabing pro 12 trhů</li>
+      <li class="note" style="--r:.8deg"><b>Kontrola značky</b>Logo, barvy, tón. Pak schválení člověkem</li>
+      <li class="note note--ink" style="--r:-.4deg" id="vid-out"><b>Do kampaně</b>Rovnou k agentovi 1</li>
+    </ol>
+  </section>
+  <section class="frame" id="e2" data-title="Formáty" style="width:460px">
+    <h2 class="frame__label">Formáty</h2>
+    <div class="chips"><span>Reels 9:16</span><span>Stories</span><span>Feed 4:5 a 1:1</span><span>Produktová videa</span><span>Bannery</span><span>Katalogové šablony</span></div>
+  </section>
+</div>
+
+<!-- F. Agent 3: B2B lead gen -->
+<div class="lane" data-lane="Agent 3 · B2B lead gen: LinkedIn + e-mail">
+  <section class="frame" id="f1" data-title="Komu píšeme" style="width:760px">
+    <h2 class="frame__label">Komu píšeme</h2>
+    <p class="frame__lead">Agent najde správné lidi ve firmách, napíše jim a domluví schůzku obchodníkovi.</p>
+    <div class="segs">
+      <div class="note seg" style="--r:-.8deg"><b>Řetězce s hobby a papírnictvím</b>Velkoodběr Zuty a Diamondi.<span class="seg__logos"><img src="assets/img/brands/zuty.svg" alt="Zuty"><img src="assets/img/brands/diamondi.svg" alt="Diamondi"></span></div>
+      <div class="note seg" style="--r:.7deg"><b>DIY a hobby markety</b>FOA a Fexi do regálů. Podobné firmy jako partneři Hornbach a Globus.<span class="seg__logos"><img src="assets/img/brands/foa.svg" alt="FOA"><img src="assets/img/brands/fexi-mark.svg" alt="Fexi"></span></div>
+      <div class="note seg" style="--r:-.5deg"><b>Architekti, developeři, okenáři</b>Stínění Atelix na míru do projektů.<span class="seg__logos"><img src="assets/img/brands/atelix.svg" alt="Atelix"></span></div>
+      <div class="note seg" style="--r:.9deg"><b>Firmy s 20–200 lidmi</b>Everbot pro podporu a obchod.<span class="seg__logos"><img src="assets/img/brands/everbot.svg" alt="Everbot"></span></div>
+    </div>
+  </section>
+  <section class="frame" id="f2" data-title="Sekvence oslovení" style="width:620px">
+    <h2 class="frame__label">Sekvence oslovení</h2>
+    <ol class="seq seq--v">
+      <li><span class="seq__d">Den 1</span><span class="seq__c in">LinkedIn</span>Návštěva profilu a žádost o spojení</li>
+      <li><span class="seq__d">Den 3</span><span class="seq__c in">LinkedIn</span>Krátká osobní zpráva</li>
+      <li><span class="seq__d">Den 5</span><span class="seq__c em">E-mail</span>Nabídka šitá na jejich firmu</li>
+      <li><span class="seq__d">Den 9</span><span class="seq__c em">E-mail</span>Příklad z praxe a čísla</li>
+      <li><span class="seq__d">Den 14</span><span class="seq__c in">LinkedIn</span>Poslední připomenutí</li>
+      <li class="seq__end" id="b2b-meet"><span class="seq__d">Výsledek</span>Schůzka v kalendáři obchodníka + záznam v inboxu poptávek</li>
+    </ol>
+  </section>
+</div>
+
+<!-- G. Agent 4: SEO -->
+<div class="lane" data-lane="Agent 4 · SEO pro 12 trhů">
+  <section class="frame" id="g1" data-title="Co SEO agent dělá" style="width:760px">
+    <h2 class="frame__label">Co SEO agent dělá</h2>
+    <div class="grid2">
+      <div class="note" style="--r:-.8deg"><b>Klíčová slova</b>Výzkum pro každou značku a jazyk</div>
+      <div class="note" style="--r:.7deg"><b>Obsah</b>Návody a kategorie: „jak vybrat roletu den a noc“</div>
+      <div class="note" style="--r:-.6deg"><b>Technika</b>Audit Shoptetu: rychlost, duplicity, hreflang</div>
+      <div class="note" style="--r:1deg"><b>Odkazy</b>Zmínky na blozích o tvoření a bydlení</div>
+      <div class="note" style="--r:-.9deg"><b>Report</b>Pozice a návštěvnost v dashboardu</div>
+      <div class="note note--grey" style="--r:.5deg"><span class="tag">Pojistka</span>Každý článek schválí člověk</div>
+    </div>
+  </section>
+  <section class="frame" id="g2" data-title="Témata podle trhu" style="width:560px">
+    <h2 class="frame__label">Kde začít · témata podle trhu</h2>
+    <table class="kw">
+      <thead><tr><th>Trh</th><th>Značka</th><th>Téma</th></tr></thead>
+      <tbody>
+        <tr><td>DE</td><td>Zuty</td><td>Malen nach Zahlen</td></tr>
+        <tr><td>DE</td><td>Diamondi</td><td>Diamond Painting</td></tr>
+        <tr><td>PL</td><td>Zuty</td><td>malowanie po numerach</td></tr>
+        <tr><td>FR</td><td>Zuty</td><td>peinture par numéro</td></tr>
+        <tr><td>CZ</td><td>Fexi</td><td>rolety den a noc</td></tr>
+        <tr><td>PL</td><td>FOA</td><td>moskitiery</td></tr>
+      </tbody>
+    </table>
+    <p class="frame__foot">Objemy hledání doplní agent při auditu.</p>
+  </section>
+</div>
+
+<!-- H. Roadmapa -->
+<div class="lane" data-lane="Roadmapa">
+  <section class="frame" id="h1" data-title="Časová osa" style="width:1900px">
+    <h2 class="frame__label">Časová osa · prosinec 2026 – květen 2027</h2>
+    <div class="tl">
+      <div class="tl__head"><span></span><span>Prosinec</span><span>Leden</span><span>Únor</span><span>Březen</span><span>Duben</span><span>Květen</span></div>
+      <div class="tl__lane"><span class="tl__name">Data a reporting</span>
+        <div class="bar bar--ink" id="tl-data" style="--a:1;--b:3">Ostrý reporting: Shoptet, GA4, Meta</div>
+        <div class="bar" style="--a:3;--b:7">Týdenní report všech agentů</div></div>
+      <div class="tl__lane"><span class="tl__name">Meta Ads</span>
+        <div class="bar" style="--a:2;--b:4">Pilot: Zuty + Fexi v CZ a SK</div>
+        <div class="ms" style="--a:4">Vyhodnocení pilotu</div>
+        <div class="bar bar--ink" style="--a:4;--b:7">Všech 6 značek, 12 trhů</div></div>
+      <div class="tl__lane"><span class="tl__name">Video a grafika</span>
+        <div class="bar" style="--a:2;--b:3">Brand manuály</div>
+        <div class="bar bar--ink" style="--a:3;--b:7">Nové kreativy každý týden</div></div>
+      <div class="tl__lane"><span class="tl__name">B2B lead gen</span>
+        <div class="bar" style="--a:3;--b:4">Seznamy a texty</div>
+        <div class="bar bar--ink" style="--a:4;--b:7">Automatické oslovení LinkedIn + e-mail</div></div>
+      <div class="tl__lane"><span class="tl__name">SEO</span>
+        <div class="bar" style="--a:4;--b:5">Audit</div>
+        <div class="bar bar--ink" style="--a:5;--b:7">Obsah pro DE, PL a FR</div></div>
+    </div>
+    <p class="frame__foot">Termíny jsou návrh. Upravíme je na první schůzce.</p>
+  </section>
+  <section class="frame" id="h2" data-title="Co budeme měřit" style="width:620px">
+    <h2 class="frame__label">Co budeme měřit</h2>
+    <div class="grid2">
+      <div class="note" style="--r:-.7deg"><b>Reklama</b>ROAS a cena objednávky podle značky a trhu</div>
+      <div class="note" style="--r:.6deg"><b>Kreativy</b>Nové kreativy za týden a jejich výkon</div>
+      <div class="note" style="--r:-.4deg"><b>B2B</b>Odpovědi, schůzky a zakázky</div>
+      <div class="note" style="--r:.9deg"><b>SEO</b>Organická návštěvnost a pozice</div>
+      <div class="note note--ink wide2" style="--r:-.6deg"><b>Čas</b>Hodiny práce marketingu ušetřené za měsíc</div>
+    </div>
+  </section>
+</div>
+
+</div>
+</main>
+
+<script src="assets/js/board.js"></script>
+</body>
+</html>
