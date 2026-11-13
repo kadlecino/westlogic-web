@@ -106,48 +106,28 @@
     } else { x -= e.deltaX; y -= e.deltaY; apply(); } // trackpad two-finger pan
   }, { passive: false });
 
-  /* Pan + pinch on the canvas, drag on notes */
+  /* Pan + pinch anywhere on the canvas (nothing on the board can be moved) */
   const pts = new Map();
-  let pan = null, pinch = null, drag = null;
-  const saved = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } })();
-  const notes = [...document.querySelectorAll('.note')];
-  notes.forEach((n, i) => {
-    n.dataset.nid = n.id || 'n' + i;
-    const s = saved[n.dataset.nid];
-    if (s) { n.style.setProperty('--dx', s[0] + 'px'); n.style.setProperty('--dy', s[1] + 'px'); }
-  });
-  const persist = () => {
-    const out = {};
-    notes.forEach(n => {
-      const dx = parseFloat(n.style.getPropertyValue('--dx')) || 0, dy = parseFloat(n.style.getPropertyValue('--dy')) || 0;
-      if (dx || dy) out[n.dataset.nid] = [dx, dy];
-    });
-    try { localStorage.setItem(KEY, JSON.stringify(out)); } catch {}
-  };
-  $('#resetNotes').addEventListener('click', () => {
-    notes.forEach(n => { n.style.removeProperty('--dx'); n.style.removeProperty('--dy'); });
-    try { localStorage.removeItem(KEY); } catch {}
-    drawLinks();
-  });
+  let pan = null, pinch = null, panMoved = 0;
+  // A drag that started on a link pans the board and must not open the link.
+  vp.addEventListener('click', e => { if (panMoved > 5 && e.target.closest('a')) { e.preventDefault(); e.stopPropagation(); } }, true);
+  vp.addEventListener('dragstart', e => e.preventDefault());
+  try { localStorage.removeItem(KEY); } catch {}
 
   vp.addEventListener('pointerdown', e => {
-    if (e.target.closest('a, button')) return;
+    if (e.target.closest('button')) return;
+    panMoved = 0;
     vp.setPointerCapture(e.pointerId);
     pts.set(e.pointerId, [e.clientX, e.clientY]);
     cancelAnimationFrame(anim);
     if (pts.size === 2) {
-      drag = null; pan = null;
+      pan = null;
       const [a, b] = [...pts.values()];
       pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), k, cx: (a[0] + b[0]) / 2, cy: (a[1] + b[1]) / 2, x, y };
       return;
     }
-    const note = e.target.closest('.note');
-    if (note && e.pointerType !== 'touch') { // on touch screens a finger always pans
-      drag = { note, sx: e.clientX, sy: e.clientY, dx: parseFloat(note.style.getPropertyValue('--dx')) || 0, dy: parseFloat(note.style.getPropertyValue('--dy')) || 0, moved: false };
-    } else {
-      pan = { sx: e.clientX, sy: e.clientY, x, y };
-      vp.classList.add('is-panning');
-    }
+    pan = { sx: e.clientX, sy: e.clientY, x, y };
+    vp.classList.add('is-panning');
   });
   vp.addEventListener('pointermove', e => {
     if (!pts.has(e.pointerId)) return;
@@ -160,20 +140,13 @@
       x = cx - (pinch.cx - pinch.x) * (nk / pinch.k);
       y = cy - (pinch.cy - pinch.y) * (nk / pinch.k);
       k = nk; apply();
-    } else if (drag) {
-      const ddx = (e.clientX - drag.sx) / k, ddy = (e.clientY - drag.sy) / k;
-      if (!drag.moved && Math.hypot(ddx, ddy) * k < 4) return;
-      drag.moved = true;
-      drag.note.classList.add('is-drag');
-      drag.note.style.setProperty('--dx', drag.dx + ddx + 'px');
-      drag.note.style.setProperty('--dy', drag.dy + ddy + 'px');
     } else if (pan) {
       x = pan.x + e.clientX - pan.sx; y = pan.y + e.clientY - pan.sy; apply();
+      panMoved = Math.max(panMoved, Math.hypot(e.clientX - pan.sx, e.clientY - pan.sy));
     }
   });
   const end = e => {
     pts.delete(e.pointerId);
-    if (drag) { drag.note.classList.remove('is-drag'); if (drag.moved) { persist(); drawLinks(); } drag = null; }
     if (pts.size < 2) pinch = null;
     if (!pts.size) { pan = null; vp.classList.remove('is-panning'); }
   };

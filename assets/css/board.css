@@ -52,7 +52,7 @@ button { font: inherit; color: inherit; }
   position: relative; background: var(--paper); border-radius: 6px; padding: 18px 20px;
   box-shadow: 0 1px 1px rgba(20,20,20,.08), 0 10px 22px -14px rgba(20,20,20,.45);
   transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--r, 0deg));
-  cursor: grab; user-select: none; transition: box-shadow .25s;
+  user-select: none;
 }
 .note.is-drag { cursor: grabbing; z-index: 10; box-shadow: 0 2px 4px rgba(20,20,20,.1), 0 24px 40px -18px rgba(20,20,20,.55); transition: none; }
 .note b { display: block; font-weight: 700; font-stretch: 82%; font-size: 1.05em; margin-bottom: 4px; }
@@ -260,3 +260,6 @@ body.presenting .ui--top, body.presenting .ui--right, body.presenting .panel { o
 .seq--v .seq__end { border-bottom: 0; }
 .shot ul { margin-top: 12px; }
 .idea { font-size: 17px; }
+
+.vp a, .vp img { -webkit-user-drag: none; user-select: none; }
+.vp a { cursor: pointer; }
