@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reporting značek – Westlogic</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="https://westlogic.eu/wp-content/uploads/2021/06/westlogic_favicon.png">
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<header class="bar">
+  <div class="bar__in">
+    <a class="bar__logo" href="dashboard.html"><img src="assets/img/logo.svg" alt="Westlogic" width="150" height="32"></a>
+    <nav class="bar__tabs" aria-label="Sekce">
+      <a href="dashboard.html" aria-current="page">Reporting značek</a>
+      <a href="poptavky.html">Poptávky z webu</a>
+    </nav>
+    <a class="bar__site" href="index.html">Web westlogic.eu<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </div>
+</header>
+<div class="demo" role="note">
+  <div class="demo__in">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.75"/><path d="M12 8v5M12 16.5v.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+    <p><b>Ukázková data.</b> Čísla jsou vymyšlená. Po napojení se sem natáhnou ze Shoptetu (Fexi, Zuty, FOA, Diamondi), WordPressu (Atelix), fakturace Everbotu a z GA4.</p>
+  </div>
+</div>
+
+<main class="page">
+  <div class="head">
+    <div>
+      <h1>Reporting značek</h1>
+      <p id="periodText">Listopad 2025 – říjen 2026</p>
+    </div>
+    <div class="filters" role="group" aria-label="Filtry">
+      <div class="seg" id="period" role="group" aria-label="Období">
+        <button type="button" data-p="12m" aria-pressed="true">12 měsíců</button>
+        <button type="button" data-p="q" aria-pressed="false">Q3 2026</button>
+        <button type="button" data-p="m" aria-pressed="false">Říjen 2026</button>
+      </div>
+      <select class="select" id="brandSel" aria-label="Značka"><option value="all">Všechny značky</option></select>
+      <select class="select" id="marketSel" aria-label="Trh"><option value="all">Všechny trhy</option></select>
+    </div>
+  </div>
+
+  <dl class="kpis" id="kpis"></dl>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="trend-h">
+      <div class="panel__head">
+        <h2 id="trend-h">Tržby po měsících</h2>
+        <button class="linkbtn" type="button" id="tableToggle" aria-expanded="false">Zobrazit jako tabulku</button>
+      </div>
+      <div class="panel__body">
+        <p class="note" id="trendSub" style="margin:0 0 8px"></p>
+        <div class="chart" id="trend"></div>
+        <div id="trendTable" hidden></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="mk-h">
+      <div class="panel__head"><h2 id="mk-h">Tržby podle trhů</h2><p id="mkSub"></p></div>
+      <div class="panel__body"><div class="hbars" id="markets"></div></div>
+    </section>
+  </div>
+
+  <div class="grid grid--even" style="grid-template-columns:minmax(0,8fr) minmax(0,4fr)">
+    <section class="panel" aria-labelledby="br-h">
+      <div class="panel__head"><h2 id="br-h">Značky</h2><p>Klikni na řádek pro detail značky</p></div>
+      <div class="panel__body tblwrap">
+        <table class="tbl" id="brands">
+          <thead><tr><th>Značka</th><th>Tržby (EUR)</th><th>Podíl</th><th>Změna</th><th>Objednávky</th><th>Prům. objednávka</th><th>Konverze</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="inq-h">
+      <div class="panel__head"><h2 id="inq-h">Poptávky z webu</h2><a class="linkbtn" href="poptavky.html">Otevřít inbox</a></div>
+      <div class="panel__body">
+        <p class="note" style="margin:0 0 10px">Podle typu, za listopad 2026</p>
+        <div class="hbars" id="inq"></div>
+      </div>
+    </section>
+  </div>
+
+  <p class="note">Tržby jsou bez DPH v EUR. Změna se počítá proti stejně dlouhému předchozímu období. Konverze = objednávky / návštěvy.</p>
+</main>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/inquiries.js"></script>
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>
