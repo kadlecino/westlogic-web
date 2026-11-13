@@ -117,7 +117,8 @@
   vp.addEventListener('pointerdown', e => {
     if (e.target.closest('button')) return;
     panMoved = 0;
-    vp.setPointerCapture(e.pointerId);
+    // Capture only once the pointer really drags, so a plain click still reaches links.
+    if (e.pointerType === 'touch') vp.setPointerCapture(e.pointerId);
     pts.set(e.pointerId, [e.clientX, e.clientY]);
     cancelAnimationFrame(anim);
     if (pts.size === 2) {
@@ -143,6 +144,7 @@
     } else if (pan) {
       x = pan.x + e.clientX - pan.sx; y = pan.y + e.clientY - pan.sy; apply();
       panMoved = Math.max(panMoved, Math.hypot(e.clientX - pan.sx, e.clientY - pan.sy));
+      if (panMoved > 5 && !vp.hasPointerCapture(e.pointerId)) vp.setPointerCapture(e.pointerId);
     }
   });
   const end = e => {
