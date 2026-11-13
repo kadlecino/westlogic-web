@@ -261,5 +261,6 @@ body.presenting .ui--top, body.presenting .ui--right, body.presenting .panel { o
 .shot ul { margin-top: 12px; }
 .idea { font-size: 17px; }
 
-.vp a, .vp img { -webkit-user-drag: none; user-select: none; }
+.vp, .vp * { -webkit-user-select: none; user-select: none; }
+.vp a, .vp img { -webkit-user-drag: none; }
 .vp a { cursor: pointer; }

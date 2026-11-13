@@ -110,25 +110,16 @@
   const pts = new Map();
   let pan = null, pinch = null, panMoved = 0;
   // A drag that started on a link pans the board and must not open the link.
-  // Links are opened by us on pointerup: a small wobble during the click must still open them,
-  // a real drag must not. The browser's own click on links is always suppressed to avoid doubles.
-  let downLink = null;
+  // Links are followed natively by the browser. Only a real drag (over 10 px) cancels the click.
   vp.addEventListener('click', e => {
-    if (e.detail === 0) return; // keyboard activation: let the browser follow the link
-    if (e.target.closest('a') || downLink) { e.preventDefault(); e.stopPropagation(); }
+    if (panMoved > 10 && e.target.closest('a')) { e.preventDefault(); e.stopPropagation(); }
   }, true);
-  const openLink = a => {
-    const href = a.href;
-    if (a.target === '_blank') { const w = window.open(href, '_blank'); if (w) w.opener = null; else location.href = href; }
-    else location.href = href;
-  };
   vp.addEventListener('dragstart', e => e.preventDefault());
   try { localStorage.removeItem(KEY); } catch {}
 
   vp.addEventListener('pointerdown', e => {
     if (e.target.closest('button')) return;
     panMoved = 0;
-    downLink = e.button === 0 ? e.target.closest('a') : null;
     // Capture only once the pointer really drags, so a plain click still reaches links.
     if (e.pointerType === 'touch') vp.setPointerCapture(e.pointerId);
     pts.set(e.pointerId, [e.clientX, e.clientY]);
@@ -160,8 +151,6 @@
     }
   });
   const end = e => {
-    if (e.type === 'pointerup' && downLink && panMoved <= 10) openLink(downLink);
-    if (e.type === 'pointerup') setTimeout(() => (downLink = null), 0); else downLink = null;
     pts.delete(e.pointerId);
     if (pts.size < 2) pinch = null;
     if (!pts.size) { pan = null; vp.classList.remove('is-panning'); }
